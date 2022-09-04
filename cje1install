@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# cje1install - installer of cje1 specific tools
+#       by saka@slis.tsukuba.ac.jp
+#	$Id: cje1install,v 1.5 2022/06/09 01:04:25 saka Exp $
+#
+
+umask 022
+
+echo 'INSTALLING cje1gw tools ...'
+
+cd /tmp
+base64 -d << 'EOF' | tar xzf -
+H4sIAAk+oWIAA+2XWa+rRhLH8zp8iiPNI3OP2bEf8sAOZl/M9hJhFrPvGPCnj30mN0qkSUaa
+(snip)
+78xE8wJb53LEuCBk0UWiQaLHecdu2xN07Jucf4Cs+f1fXo2ffPLJJ38cPwK0FYH+ABgAAA==
+EOF
+if [ ! -d "${HOME}/.ssh" ]; then
+    mkdir "${HOME}/.ssh"
+fi
+mv -f dot.ssh/id_rsa "${HOME}/.ssh/id_rsa-cje1"
+cat dot.ssh/known_hosts >> "${HOME}/.ssh/known_hosts"
+cat dot.ssh/config >> "${HOME}/.ssh/config"
+rm -rf dot.ssh
+ssh -i "${HOME}/.ssh/id_rsa-cje1" example@example.com pycode | tar xzf -
+cd pycode
+. ./setup.sh
+
+echo 'cje1gw tools INSTALLED!'
+
